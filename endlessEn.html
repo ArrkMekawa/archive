@@ -4,22 +4,27 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Document</title>
+		<title>ランダム出題・知らないと恥ずかしい超基本単語200</title>
 	</head>
 	<body>
-		<h1>ボキャブラリーの刃　無限英単語編</h1>
+		<h1>ランダム英単語 超基本200</h1>
 		<p>
+			verson 2.0 2022/12/02<br>
 			知らないと恥ずかしい超基本単語200語から出題。<br>
-			このページが読み込まれた瞬間から開始します。<br>
-			問題の最後の()内は頭文字を示しています。
+			大文字・小文字は問いません。<br>
+			問題の最後の()内は答えの頭文字を示しています。<br>
+			間違えると答えが1文字ずつ開示されますが、同時に3秒のペナルティが課されます。
+			<h3>スコアの計算式</h3>
+			答えの文字数　÷　解答時間　×　100　point <br>
 		</p>
 		<p>
 			スコア：<span id="scoreField"></span><br>
-			<span id="questionField"></span><br>
-			<input type="text" name="hoge" id="answerTextField">
-			<input type="button" value="解答" id="answerBtn" onclick="check()">
+			<span id="questionField" style="font-size: 1.5em;"></span><br>
+			<input type="text" name="hoge" id="answerTextField" style="font-size: 2em;">
+			<input type="button" value="解答" id="answerBtn" onclick="check()" style="font-size: 1.5em;">
 		</p>
 		<p id="log">ここに履歴が表示されます</p>
+		<p>2022-11-27 更新</p>
 	</body>
 </html>
 
@@ -256,9 +261,15 @@
 		if(e.keyCode == 13) check();
 	}
 
+	window.addEventListener('DOMContentLoaded', function(){
+		setInterval(() => {
+			answerTextField.value = answerTextField.value.toLowerCase();
+		}, 100);
+	});
+
 	//採点
 	function check(){
-		if(answerTextField.value == dataset[questionNum][1]){
+		if(answerTextField.value.toUpperCase() == dataset[questionNum][1].toUpperCase()){
 			let ansTime = (new Date().getTime() - startTime) / 1000;
 			let ansStrCount = answerTextField.value.length * 100;
 			let score = parseInt(ansStrCount / ansTime);
@@ -267,6 +278,8 @@
 			log.innerHTML = '問' + questionCount + ' : ' + dataset[questionNum][0] + ' ('+ answerCount +'回で正解、'+ ansTime +'秒、スコア' + score + ')<br>' + log.innerHTML;
 		}else{
 			answerCount++;
+			questionField.innerHTML = "問" + questionCount + " : " + dataset[questionNum][0] + "<br> Hint:" + dataset[questionNum][1].slice(0, answerCount) + "...";
+			startTime -= 3000;
 			return;
 		}
 		answerTextField.value = "";
